@@ -16,19 +16,45 @@
 
     .box {
       text-align: center;
-      font-size: 24px;
+      width: 320px;
+    }
+
+    #stage {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .bar {
+      width: 100%;
+      height: 10px;
+      background: #333;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 10px 0 5px;
+    }
+
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: #4caf50;
+      transition: width 0.3s;
+    }
+
+    #percent {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 20px;
     }
 
     .troll {
       display: none;
       font-size: 28px;
       color: #ff4d4d;
-      margin-top: 10px;
     }
 
-    #stage {
-      opacity: 1;
-      transition: opacity 0.5s;
+    #dots {
+      display: inline-block;
+      width: 20px;
     }
   </style>
 </head>
@@ -36,22 +62,33 @@
 <body>
   <div class="box">
     <div id="stage">Verifying your age<span id="dots"></span></div>
+
+    <div class="bar">
+      <div class="fill" id="fill"></div>
+    </div>
+
+    <div id="percent">0%</div>
+
     <div class="troll" id="troll">😂 You've been trolled lol</div>
   </div>
 
   <script>
     const dots = document.getElementById("dots");
+    const fill = document.getElementById("fill");
+    const percent = document.getElementById("percent");
     const stage = document.getElementById("stage");
     const troll = document.getElementById("troll");
+
+    let dotState = 0;
+    let progress = 0;
 
     const stages = [
       "Verifying your age",
       "Checking device integrity",
       "Scanning security protocols",
-      "Finalizing secure session"
+      "Completing age check"
     ];
 
-    let dotState = 0;
     let stageIndex = 0;
 
     // dots animation
@@ -60,29 +97,56 @@
       dots.textContent = ".".repeat(dotState);
     }, 400);
 
-    // stage switching
-    const stageInterval = setInterval(() => {
-      stageIndex++;
+    // progress logic
+    const progressInterval = setInterval(() => {
+      if (progress < 99) {
+        progress += 2;
 
-      if (stageIndex < stages.length) {
-        stage.style.opacity = 0;
+        if (progress > 99) progress = 99;
 
-        setTimeout(() => {
+        fill.style.width = progress + "%";
+        percent.textContent = progress + "%";
+
+        // change stage text occasionally
+        if (progress % 25 === 0 && stageIndex < stages.length - 1) {
+          stageIndex++;
           stage.textContent = stages[stageIndex];
           stage.appendChild(dots);
-          stage.style.opacity = 1;
-        }, 300);
+        }
+      } 
+      else {
+        // stuck at 99%
+        percent.textContent = "99%";
+        fill.style.width = "99%";
+
+        clearInterval(progressInterval);
+        clearInterval(dotInterval);
+
+        // drop back to 80%
+        setTimeout(() => {
+          let drop = 99;
+
+          const dropInterval = setInterval(() => {
+            drop -= 1;
+            fill.style.width = drop + "%";
+            percent.textContent = drop + "%";
+
+            if (drop <= 80) {
+              clearInterval(dropInterval);
+
+              // wait then troll
+              setTimeout(() => {
+                stage.style.display = "none";
+                document.querySelector(".bar").style.display = "none";
+                percent.style.display = "none";
+                troll.style.display = "block";
+              }, 3000);
+            }
+          }, 50);
+
+        }, 3000);
       }
-    }, 1200);
-
-    // final reveal
-    setTimeout(() => {
-      clearInterval(dotInterval);
-      clearInterval(stageInterval);
-
-      stage.style.display = "none";
-      troll.style.display = "block";
-    }, 6000);
+    }, 80);
   </script>
 </body>
 </html>
