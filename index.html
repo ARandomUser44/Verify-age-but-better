@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verifying...</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .troll {
+      display: none;
+      font-size: 28px;
+      color: #ff4d4d;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div id="text">Verifying your age<span id="dots"></span></div>
+    <div class="troll" id="troll"> You've been trolled lol</div>
+  </div>
+
+  <script>
+    const dots = document.getElementById("dots");
+    const text = document.getElementById("text");
+    const troll = document.getElementById("troll");
+
+    let dotState = 0;
+
+    // dots animation
+    const dotInterval = setInterval(() => {
+      dotState = (dotState + 1) % 4;
+      dots.textContent = ".".repeat(dotState);
+    }, 500);
+
+    // switch after 5 seconds
+    setTimeout(() => {
+      clearInterval(dotInterval);
+      text.style.display = "none";
+      troll.style.display = "block";
+    }, 5000);
+  </script>
+</body>
+</html>
+
