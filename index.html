@@ -168,7 +168,11 @@
 
           // CAPTCHA STEP BEHAVIOR
           if (steps[stepIndex] === "I’m not a robot") {
-            captcha.style.display = "flex";
+  clearInterval(interval); // ⛔ stop progress bar immediately
+  captcha.style.display = "flex";
+  return;
+          }
+          
 
             return; // wait for user click
           }
