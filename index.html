@@ -40,7 +40,6 @@
       height: 100%;
       width: 0%;
       background: #4caf50;
-      transition: width 0.2s;
     }
 
     #percent {
@@ -97,7 +96,7 @@
 
 <body>
 
-  <!-- CAPTCHA STEP -->
+  <!-- CAPTCHA -->
   <div class="captcha" id="captcha">
     <div class="box" id="checkBox"></div>
     <span>I’m not a robot</span>
@@ -114,119 +113,120 @@
 
     <div id="percent">0%</div>
 
-    <div class="troll" id="troll"> You've been trolled lol</div>
+    <div class="troll" id="troll">😂 You've been trolled lol</div>
 
   </div>
 
-  <script>
-    const checkBox = document.getElementById("checkBox");
-    const captcha = document.getElementById("captcha");
-    const main = document.getElementById("main");
+<script>
+const steps = [
+  "Verifying your age",
+  "Checking device integrity",
+  "Scanning security protocols",
+  "I’m not a robot",
+  "Completing age check"
+];
 
-    const dots = document.getElementById("dots");
-    const fill = document.getElementById("fill");
-    const percent = document.getElementById("percent");
-    const stage = document.getElementById("stage");
-    const troll = document.getElementById("troll");
+let stepIndex = 0;
+let progress = 0;
+let interval = null;
 
-    const steps = [
-      "Verifying your age",
-      "Checking device integrity",
-      "Scanning security protocols",
-      "I’m not a robot",
-      "Completing age check"
-    ];
+const checkBox = document.getElementById("checkBox");
+const captcha = document.getElementById("captcha");
+const main = document.getElementById("main");
 
-    let stepIndex = 0;
-    let progress = 0;
-    let dotState = 0;
-    let started = false;
+const fill = document.getElementById("fill");
+const percent = document.getElementById("percent");
+const stage = document.getElementById("stage");
+const troll = document.getElementById("troll");
+const dots = document.getElementById("dots");
 
-    // dots animation
-    setInterval(() => {
-      if (!started) return;
-      dotState = (dotState + 1) % 4;
-      dots.textContent = ".".repeat(dotState);
-    }, 400);
+let dotState = 0;
+let started = false;
 
-    function runStep() {
-      progress = 0;
-      fill.style.width = "0%";
-      percent.textContent = "0%";
+/* dots animation */
+setInterval(() => {
+  if (!started) return;
+  dotState = (dotState + 1) % 4;
+  dots.textContent = ".".repeat(dotState);
+}, 400);
 
-      stage.textContent = steps[stepIndex];
-      stage.appendChild(dots);
+function runStep() {
+  progress = 0;
+  fill.style.width = "0%";
+  percent.textContent = "0%";
 
-      let interval = setInterval(() => {
-        progress += 2;
+  stage.textContent = steps[stepIndex];
+  stage.appendChild(dots);
 
-        fill.style.width = progress + "%";
-        percent.textContent = progress + "%";
+  interval = setInterval(() => {
+    progress += 2;
 
-        if (progress >= 100) {
-          clearInterval(interval);
+    fill.style.width = progress + "%";
+    percent.textContent = progress + "%";
 
-          // CAPTCHA STEP BEHAVIOR
-          if (steps[stepIndex] === "I’m not a robot") {
-  clearInterval(interval); // ⛔ stop progress bar immediately
-  captcha.style.display = "flex";
-  return;
-          }
-          
+    if (progress >= 100) {
+      clearInterval(interval);
 
-            return; // wait for user click
-          }
+      stepIndex++;
 
-          stepIndex++;
+      /* CAPTCHA STEP */
+      if (steps[stepIndex - 1] === "I’m not a robot") {
+        captcha.style.display = "flex";
+        return; // IMPORTANT FIX: stop progress completely
+      }
 
-          if (stepIndex < steps.length) {
-            setTimeout(runStep, 2000);
-          } else {
-            // FINAL STAGE
-            setTimeout(() => {
-              let finalProgress = 99;
-
-              fill.style.width = "99%";
-              percent.textContent = "99%";
-
-              let drop = setInterval(() => {
-                finalProgress -= 1;
-
-                fill.style.width = finalProgress + "%";
-                percent.textContent = finalProgress + "%";
-
-                if (finalProgress <= 30) {
-                  clearInterval(drop);
-
-                  stage.style.display = "none";
-                  document.querySelector(".bar").style.display = "none";
-                  percent.style.display = "none";
-                  troll.style.display = "block";
-                }
-              }, 60);
-
-            }, 500);
-          }
-        }
-      }, 30);
+      if (stepIndex < steps.length) {
+        setTimeout(runStep, 500);
+      } else {
+        runFinalStage();
+      }
     }
+  }, 30);
+}
 
-    // CAPTCHA click continues flow
-    checkBox.addEventListener("click", () => {
-      checkBox.classList.add("checked");
+/* FINAL STAGE LOGIC */
+function runFinalStage() {
+  setTimeout(() => {
+    let finalProgress = 99;
 
-      setTimeout(() => {
-        captcha.style.display = "none";
-        stepIndex++;
-        runStep();
-      }, 600);
-    });
+    fill.style.width = "99%";
+    percent.textContent = "99%";
 
-    // start first step automatically
-    main.style.display = "block";
+    let drop = setInterval(() => {
+      finalProgress -= 1;
+
+      fill.style.width = finalProgress + "%";
+      percent.textContent = finalProgress + "%";
+
+      if (finalProgress <= 30) {
+        clearInterval(drop);
+
+        stage.style.display = "none";
+        document.querySelector(".bar").style.display = "none";
+        percent.style.display = "none";
+        troll.style.display = "block";
+      }
+    }, 60);
+
+  }, 2000); // ONLY final stage delay
+}
+
+/* CAPTCHA CLICK */
+checkBox.addEventListener("click", () => {
+  checkBox.classList.add("checked");
+
+  setTimeout(() => {
+    captcha.style.display = "none";
+    stepIndex++;
     runStep();
-    started = true;
-  </script>
+  }, 600);
+});
+
+/* START */
+main.style.display = "block";
+started = true;
+runStep();
+</script>
 
 </body>
 </html>
