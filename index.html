@@ -25,35 +25,64 @@
       color: #ff4d4d;
       margin-top: 10px;
     }
+
+    #stage {
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
   </style>
 </head>
 
 <body>
   <div class="box">
-    <div id="text">Verifying your age<span id="dots"></span></div>
-    <div class="troll" id="troll"> You've been trolled lol</div>
+    <div id="stage">Verifying your age<span id="dots"></span></div>
+    <div class="troll" id="troll">😂 You've been trolled lol</div>
   </div>
 
   <script>
     const dots = document.getElementById("dots");
-    const text = document.getElementById("text");
+    const stage = document.getElementById("stage");
     const troll = document.getElementById("troll");
 
+    const stages = [
+      "Verifying your age",
+      "Checking device integrity",
+      "Scanning security protocols",
+      "Finalizing secure session"
+    ];
+
     let dotState = 0;
+    let stageIndex = 0;
 
     // dots animation
     const dotInterval = setInterval(() => {
       dotState = (dotState + 1) % 4;
       dots.textContent = ".".repeat(dotState);
-    }, 500);
+    }, 400);
 
-    // switch after 5 seconds
+    // stage switching
+    const stageInterval = setInterval(() => {
+      stageIndex++;
+
+      if (stageIndex < stages.length) {
+        stage.style.opacity = 0;
+
+        setTimeout(() => {
+          stage.textContent = stages[stageIndex];
+          stage.appendChild(dots);
+          stage.style.opacity = 1;
+        }, 300);
+      }
+    }, 1200);
+
+    // final reveal
     setTimeout(() => {
       clearInterval(dotInterval);
-      text.style.display = "none";
+      clearInterval(stageInterval);
+
+      stage.style.display = "none";
       troll.style.display = "block";
-    }, 5000);
+    }, 6000);
   </script>
 </body>
 </html>
-
