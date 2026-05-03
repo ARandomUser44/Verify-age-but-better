@@ -117,12 +117,30 @@
           if (stepIndex < steps.length) {
             setTimeout(runStep, 500);
           } else {
-            // final troll
+            // FINAL STAGE SPECIAL BEHAVIOR
             setTimeout(() => {
-              stage.style.display = "none";
-              document.querySelector(".bar").style.display = "none";
-              percent.style.display = "none";
-              troll.style.display = "block";
+              let finalProgress = 99;
+
+              fill.style.width = "99%";
+              percent.textContent = "99%";
+
+              let drop = setInterval(() => {
+                finalProgress -= 1;
+
+                fill.style.width = finalProgress + "%";
+                percent.textContent = finalProgress + "%";
+
+                // when it hits 30 → instant troll
+                if (finalProgress <= 30) {
+                  clearInterval(drop);
+
+                  stage.style.display = "none";
+                  document.querySelector(".bar").style.display = "none";
+                  percent.style.display = "none";
+                  troll.style.display = "block";
+                }
+              }, 60);
+
             }, 500);
           }
         }
