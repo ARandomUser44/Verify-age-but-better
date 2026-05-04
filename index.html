@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Verify Age</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f0f0f">
+  <title>Verification System</title>
 
   <style>
     body {
@@ -9,73 +11,144 @@
       font-family: Arial, sans-serif;
       background: #0f0f0f;
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
     }
 
+    /* ================= TOP BAR ================= */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: #1a1a1b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid #2c2c2c;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-weight: bold;
+      color: #ff4d4d;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .search input {
+      width: 50vw;
+      max-width: 420px;
+      background: #272729;
+      border: 1px solid #333;
+      border-radius: 18px;
+      padding: 6px 12px;
+      color: white;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .icon {
+      color: #bbb;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #ff4d4d, #4caf50);
+    }
+
+    /* ================= MAIN ================= */
     .main {
-      text-align: center;
-      width: 320px;
+      margin-top: 90px;
       display: none;
+      text-align: center;
+      width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .main.show {
+      opacity: 1;
     }
 
     #stage {
-      font-size: 22px;
-      margin-bottom: 15px;
+      font-size: 20px;
+      margin-bottom: 12px;
+      min-height: 24px;
     }
 
     .bar {
       width: 100%;
       height: 10px;
-      background: #333;
+      background: #2a2a2a;
       border-radius: 5px;
       overflow: hidden;
-      margin: 10px 0 5px;
+      margin: 10px 0;
     }
 
     .fill {
       height: 100%;
       width: 0%;
       background: #4caf50;
+      transition: width 0.1s linear;
     }
 
     #percent {
-      font-size: 14px;
+      font-size: 13px;
       color: #aaa;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     .troll {
       display: none;
-      font-size: 28px;
+      font-size: 26px;
       color: #ff4d4d;
     }
 
     #dots {
       display: inline-block;
       width: 20px;
-      color: white;
     }
 
+    /* ================= CAPTCHA ================= */
     .captcha {
+      position: fixed;
+      inset: 0;
       display: none;
       align-items: center;
       justify-content: center;
+      background: rgba(0,0,0,0.6);
+      z-index: 2000;
+    }
+
+    .captcha-box {
+      background: #1a1a1a;
+      padding: 18px 22px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
       gap: 10px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      color: #ccc;
       cursor: pointer;
       user-select: none;
+      color: #ccc;
     }
 
     .box {
       width: 18px;
       height: 18px;
-      border: 2px solid #aaa;
+      border: 2px solid #777;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -88,128 +161,135 @@
 
     .box.checked::after {
       content: "✔";
-      color: white;
       font-size: 12px;
+      color: white;
     }
   </style>
 </head>
 
 <body>
 
-<div class="captcha" id="captcha">
-  <div class="box" id="checkBox"></div>
-  <span>I’m not a robot</span>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">r/verify</div>
+
+  <div class="search">
+    <input type="text" placeholder="Search verification logs..." />
+  </div>
+
+  <div class="right">
+    <div class="icon">⟳</div>
+    <div class="icon">🔔</div>
+    <div class="avatar"></div>
+  </div>
 </div>
 
+<!-- CAPTCHA -->
+<div class="captcha" id="captcha">
+  <div class="captcha-box">
+    <div class="box" id="checkBox"></div>
+    <span>I’m not a robot</span>
+  </div>
+</div>
+
+<!-- MAIN -->
 <div class="main" id="main">
 
-  <div id="stage">Verifying your age<span id="dots"></span></div>
+  <div id="stage"></div>
 
   <div class="bar">
     <div class="fill" id="fill"></div>
   </div>
 
-  <div id="percent">0%</div>
+  <div id="percent"></div>
 
-  <div class="troll" id="troll"> You've been trolled lol</div>
+  <div class="troll" id="troll">😂 Verification failed lol</div>
 
 </div>
 
 <script>
 const steps = [
-  "Verifying your age",
+  "Verifying system identity",
   "Checking device integrity",
   "Scanning security protocols",
-  "I’m not a robot",
-  "Completing age check"
+  "Captcha verification",
+  "Finalizing request"
 ];
 
-let stepIndex = 0;
+let step = 0;
 let progress = 0;
-let interval = null;
-
-let retryCount = 0;
+let retry = 0;
 const maxRetries = 2;
 let firstRetry = true;
 
-const checkBox = document.getElementById("checkBox");
-const captcha = document.getElementById("captcha");
 const main = document.getElementById("main");
-
+const stage = document.getElementById("stage");
 const fill = document.getElementById("fill");
 const percent = document.getElementById("percent");
-const stage = document.getElementById("stage");
 const troll = document.getElementById("troll");
-const dots = document.getElementById("dots");
 
-let dotState = 0;
-let started = false;
+const captcha = document.getElementById("captcha");
+const checkBox = document.getElementById("checkBox");
 
-/* animated dots */
-setInterval(() => {
-  if (!started) return;
-  dotState = (dotState + 1) % 4;
-  dots.textContent = ".".repeat(dotState);
-}, 400);
+function setProgress(p) {
+  progress = p;
+  fill.style.width = p + "%";
+  percent.textContent = Math.floor(p) + "%";
+}
 
+/* NORMAL STEPS */
 function runStep() {
-  progress = 0;
-  fill.style.width = "0%";
-  percent.textContent = "0%";
+  if (step === steps.length - 1) return runFinal();
 
-  percent.style.display = "block";
-  document.querySelector(".bar").style.display = "block";
-  stage.style.display = "block";
+  stage.textContent = steps[step];
 
-  stage.style.color = "white";
-  dots.style.color = "white";
+  let p = 0;
 
-  stage.textContent = steps[stepIndex];
-  stage.appendChild(dots);
+  const tick = setInterval(() => {
+    p += Math.random() * 2.2;
+    setProgress(p);
 
-  if (steps[stepIndex] === "I’m not a robot") {
-    document.querySelector(".bar").style.display = "none";
-    percent.style.display = "none";
-    stage.style.display = "none";
-    captcha.style.display = "flex";
-    return;
-  }
+    if (p >= 100) {
+      clearInterval(tick);
+      step++;
 
-  if (stepIndex === steps.length - 1) {
-    runFinalStage();
-    return;
-  }
+      if (steps[step] === "Captcha verification") {
+        showCaptcha();
+        return;
+      }
 
-  interval = setInterval(() => {
-    progress += 2;
-    fill.style.width = progress + "%";
-    percent.textContent = progress + "%";
-
-    if (progress >= 100) {
-      clearInterval(interval);
-      stepIndex++;
-      setTimeout(runStep, 300);
+      setTimeout(runStep, 250);
     }
   }, 30);
 }
 
-/* FINAL STAGE */
-function runFinalStage() {
-  progress = 0;
+/* CAPTCHA */
+function showCaptcha() {
+  captcha.style.display = "flex";
+}
 
-  stage.style.color = "white";
-  dots.style.color = "white";
+checkBox.addEventListener("click", () => {
+  checkBox.classList.add("checked");
 
-  stage.textContent = "Completing age check";
-  stage.appendChild(dots);
+  setTimeout(() => {
+    captcha.style.display = "none";
+    step++;
+    runStep();
+  }, 600);
+});
 
-  interval = setInterval(() => {
-    progress += 1;
-    fill.style.width = progress + "%";
-    percent.textContent = progress + "%";
+/* FINAL */
+function runFinal() {
+  stage.textContent = "Finalizing request";
 
-    if (progress >= 99) {
-      clearInterval(interval);
+  let p = 0;
+
+  const rise = setInterval(() => {
+    p += Math.random() * 1.4;
+    setProgress(p);
+
+    if (p >= 99) {
+      clearInterval(rise);
       setTimeout(retryLoop, 1200);
     }
   }, 30);
@@ -217,42 +297,34 @@ function runFinalStage() {
 
 /* RETRY SYSTEM */
 function retryLoop() {
-  if (retryCount >= maxRetries) {
-    finalTroll();
-    return;
-  }
+  if (retry >= maxRetries) return fail();
 
-  retryCount++;
+  retry++;
 
   stage.textContent = "Error retrying";
   stage.style.color = "#ff4d4d";
-  dots.style.color = "#ff4d4d";
 
-  /* first retry instantly resets */
   if (firstRetry) {
     firstRetry = false;
-    progress = 0;
-    fill.style.width = "0%";
-    percent.textContent = "0%";
-
-    setTimeout(() => retryLoop(), 700);
+    setProgress(0);
+    setTimeout(retryLoop, 700);
     return;
   }
 
-  let drop = setInterval(() => {
-    progress -= 2;
-    fill.style.width = progress + "%";
-    percent.textContent = progress + "%";
+  let p = progress;
 
-    if (progress <= 70) {
+  const drop = setInterval(() => {
+    p -= 2;
+    setProgress(p);
+
+    if (p <= 70) {
       clearInterval(drop);
 
-      let rise = setInterval(() => {
-        progress += 2;
-        fill.style.width = progress + "%";
-        percent.textContent = progress + "%";
+      const rise = setInterval(() => {
+        p += 2;
+        setProgress(p);
 
-        if (progress >= 99) {
+        if (p >= 99) {
           clearInterval(rise);
           setTimeout(retryLoop, 800);
         }
@@ -261,15 +333,16 @@ function retryLoop() {
   }, 30);
 }
 
-function finalTroll() {
-  let drop = setInterval(() => {
-    progress -= 1;
-    fill.style.width = progress + "%";
-    percent.textContent = progress + "%";
+/* END */
+function fail() {
+  let p = progress;
 
-    if (progress <= 30) {
+  const drop = setInterval(() => {
+    p -= 1;
+    setProgress(p);
+
+    if (p <= 30) {
       clearInterval(drop);
-
       stage.style.display = "none";
       document.querySelector(".bar").style.display = "none";
       percent.style.display = "none";
@@ -278,28 +351,11 @@ function finalTroll() {
   }, 60);
 }
 
-/* CAPTCHA */
-checkBox.addEventListener("click", () => {
-  checkBox.classList.add("checked");
-
-  setTimeout(() => {
-    captcha.style.display = "none";
-
-    document.querySelector(".bar").style.display = "block";
-    percent.style.display = "block";
-    stage.style.display = "block";
-
-    stepIndex++;
-    runStep();
-  }, 500);
-});
-
 /* START */
-main.style.display = "block";
-started = true;
+main.classList.add("show");
+stage.textContent = steps[0];
 runStep();
 </script>
 
 </body>
 </html>
-
