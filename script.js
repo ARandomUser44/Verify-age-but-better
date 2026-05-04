@@ -1,7 +1,7 @@
 const steps = [
   "Verifying system identity",
   "Checking your browser history",
-  "Scanning security protocols",
+  "Installing malware totally not fake",
   "Completing age verification"
 ];
 
