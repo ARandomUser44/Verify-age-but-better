@@ -24,11 +24,20 @@ const checkBox = document.getElementById("checkBox");
 const tiles = document.querySelectorAll(".tile");
 const verifyBtn = document.getElementById("verifyBtn");
 
-/* INIT */
-main.classList.add("show");
-runStep();
+/* START SAFELY */
+window.onload = () => {
+  main.classList.add("show");
 
-/* STEP UI */
+  step = 0;
+  progress = 0;
+  retry = 0;
+  firstRetry = true;
+
+  setProgress(0);
+  runStep();
+};
+
+/* STEP INDICATOR (o--o system) */
 function updateStepUI() {
   let out = "";
 
@@ -49,7 +58,15 @@ function setProgress(p) {
 
 /* MAIN FLOW */
 function runStep() {
+  if (step >= steps.length) return;
+
   updateStepUI();
+
+  stage.style.display = "block";
+  fill.parentElement.style.display = "block";
+  percent.style.display = "block";
+  stepInfo.style.display = "block";
+
   stage.classList.remove("error");
   stage.textContent = steps[step];
 
@@ -62,13 +79,14 @@ function runStep() {
     if (p >= 100) {
       clearInterval(tick);
 
+      // CAPTCHA is part of step 3
       if (step === 2) {
         showCaptcha();
         return;
       }
 
       step++;
-      setTimeout(runStep, 250);
+      setTimeout(runStep, 200);
     }
   }, 30);
 }
@@ -89,9 +107,9 @@ checkBox.addEventListener("click", () => {
 });
 
 /* STEP 2 CAPTCHA */
-tiles.forEach(t => {
-  t.addEventListener("click", () => {
-    t.classList.toggle("selected");
+tiles.forEach(tile => {
+  tile.addEventListener("click", () => {
+    tile.classList.toggle("selected");
   });
 });
 
@@ -108,6 +126,7 @@ verifyBtn.addEventListener("click", () => {
 
   if (valid) {
     captcha.style.display = "none";
+
     step++;
     runStep();
   } else {
@@ -115,7 +134,7 @@ verifyBtn.addEventListener("click", () => {
   }
 });
 
-/* FINAL RETRY (with red error text) */
+/* RETRY SYSTEM (SAFE) */
 function retryLoop() {
   if (retry >= 2) return fail();
 
@@ -153,7 +172,7 @@ function retryLoop() {
   }, 30);
 }
 
-/* FAIL */
+/* FAIL SCREEN (ONLY CALLED WHEN REALLY NEEDED) */
 function fail() {
   let p = progress;
 
