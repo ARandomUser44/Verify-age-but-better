@@ -8,36 +8,48 @@ const steps = [
 let step = 0;
 let progress = 0;
 let retry = 0;
-let firstRetry = true;
 
-/* ELEMENTS */
-const main = document.getElementById("main");
-const stage = document.getElementById("stage");
-const fill = document.getElementById("fill");
-const percent = document.getElementById("percent");
-const stepInfo = document.getElementById("stepInfo");
+/* ELEMENTS (SAFE LOADING) */
+let main, stage, fill, percent, stepInfo;
+let captcha, captchaStep1, captchaStep2, checkBox, tiles, verifyBtn;
 
-const captcha = document.getElementById("captcha");
-const captchaStep1 = document.getElementById("captchaStep1");
-const captchaStep2 = document.getElementById("captchaStep2");
-const checkBox = document.getElementById("checkBox");
-const tiles = document.querySelectorAll(".tile");
-const verifyBtn = document.getElementById("verifyBtn");
+/* INIT SAFELY */
+window.addEventListener("DOMContentLoaded", () => {
 
-/* START SAFELY */
-window.onload = () => {
+  main = document.getElementById("main");
+  stage = document.getElementById("stage");
+  fill = document.getElementById("fill");
+  percent = document.getElementById("percent");
+  stepInfo = document.getElementById("stepInfo");
+
+  captcha = document.getElementById("captcha");
+  captchaStep1 = document.getElementById("captchaStep1");
+  captchaStep2 = document.getElementById("captchaStep2");
+  checkBox = document.getElementById("checkBox");
+  tiles = document.querySelectorAll(".tile");
+  verifyBtn = document.getElementById("verifyBtn");
+
+  if (!main || !stage || !fill || !percent || !stepInfo) {
+    console.error("Missing required HTML elements!");
+    return;
+  }
+
   main.classList.add("show");
 
+  resetState();
+  runStep();
+});
+
+/* RESET */
+function resetState() {
   step = 0;
   progress = 0;
   retry = 0;
-  firstRetry = true;
 
   setProgress(0);
-  runStep();
-};
+}
 
-/* STEP INDICATOR (o--o system) */
+/* STEP UI */
 function updateStepUI() {
   let out = "";
 
@@ -62,24 +74,19 @@ function runStep() {
 
   updateStepUI();
 
-  stage.style.display = "block";
-  fill.parentElement.style.display = "block";
-  percent.style.display = "block";
-  stepInfo.style.display = "block";
-
   stage.classList.remove("error");
   stage.textContent = steps[step];
 
   let p = 0;
 
   const tick = setInterval(() => {
-    p += Math.random() * 2;
+    p += Math.random() * 2.2;
     setProgress(p);
 
     if (p >= 100) {
       clearInterval(tick);
 
-      // CAPTCHA is part of step 3
+      // CAPTCHA is PART of step 3
       if (step === 2) {
         showCaptcha();
         return;
@@ -93,100 +100,54 @@ function runStep() {
 
 /* CAPTCHA */
 function showCaptcha() {
+  if (!captcha) return;
+
   captcha.style.display = "flex";
 }
 
-/* STEP 1 CAPTCHA */
-checkBox.addEventListener("click", () => {
-  checkBox.classList.add("checked");
+/* CAPTCHA STEP 1 */
+if (checkBox) {
+  checkBox.addEventListener("click", () => {
+    checkBox.classList.add("checked");
 
-  setTimeout(() => {
-    captchaStep1.style.display = "none";
-    captchaStep2.style.display = "block";
-  }, 400);
-});
-
-/* STEP 2 CAPTCHA */
-tiles.forEach(tile => {
-  tile.addEventListener("click", () => {
-    tile.classList.toggle("selected");
+    setTimeout(() => {
+      captchaStep1.style.display = "none";
+      captchaStep2.style.display = "block";
+    }, 400);
   });
-});
-
-verifyBtn.addEventListener("click", () => {
-  const selected = document.querySelectorAll(".tile.selected");
-
-  let valid = true;
-
-  selected.forEach(t => {
-    if (t.dataset.type !== "car") valid = false;
-  });
-
-  if (selected.length === 0) valid = false;
-
-  if (valid) {
-    captcha.style.display = "none";
-
-    step++;
-    runStep();
-  } else {
-    alert("Try again");
-  }
-});
-
-/* RETRY SYSTEM (SAFE) */
-function retryLoop() {
-  if (retry >= 2) return fail();
-
-  retry++;
-
-  stage.classList.add("error");
-  stage.textContent = "Error retrying";
-
-  if (firstRetry) {
-    firstRetry = false;
-    setProgress(0);
-    setTimeout(retryLoop, 700);
-    return;
-  }
-
-  let p = progress;
-
-  const drop = setInterval(() => {
-    p -= 2;
-    setProgress(p);
-
-    if (p <= 70) {
-      clearInterval(drop);
-
-      const rise = setInterval(() => {
-        p += 2;
-        setProgress(p);
-
-        if (p >= 99) {
-          clearInterval(rise);
-          setTimeout(retryLoop, 800);
-        }
-      }, 30);
-    }
-  }, 30);
 }
 
-/* FAIL SCREEN (ONLY CALLED WHEN REALLY NEEDED) */
-function fail() {
-  let p = progress;
-
-  const drop = setInterval(() => {
-    p -= 1;
-    setProgress(p);
-
-    if (p <= 30) {
-      clearInterval(drop);
-
-      stage.style.display = "none";
-      document.querySelector(".bar").style.display = "none";
-      percent.style.display = "none";
-      stepInfo.style.display = "none";
-    }
-  }, 60);
+/* CAPTCHA STEP 2 */
+if (tiles) {
+  tiles.forEach(tile => {
+    tile.addEventListener("click", () => {
+      tile.classList.toggle("selected");
+    });
+  });
 }
+
+if (verifyBtn) {
+  verifyBtn.addEventListener("click", () => {
+    const selected = document.querySelectorAll(".tile.selected");
+
+    let valid = true;
+
+    selected.forEach(t => {
+      if (t.dataset.type !== "car") valid = false;
+    });
+
+    if (selected.length === 0) valid = false;
+
+    if (valid) {
+      captcha.style.display = "none";
+
+      step++;
+      runStep();
+    } else {
+      alert("Try again");
+    }
+  });
+}
+
+/* IMPORTANT: NO AUTO FAIL ON LOAD ANYMORE */
+/* (this is what was breaking your site before) */
