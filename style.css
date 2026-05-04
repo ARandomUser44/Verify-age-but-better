@@ -38,7 +38,7 @@ body {
   outline: none;
 }
 
-/* RIGHT SIDE ICONS */
+/* RIGHT ICONS */
 .right {
   display: flex;
   gap: 10px;
@@ -101,6 +101,11 @@ body {
   color: #ddd;
 }
 
+/* ERROR STATE */
+.error {
+  color: red;
+}
+
 /* CAPTCHA OVERLAY */
 .captcha {
   position: fixed;
@@ -133,7 +138,7 @@ body {
   background: #4caf50;
 }
 
-/* CAPTCHA CHALLENGE */
+/* CAPTCHA GRID */
 .captcha-challenge {
   display: none;
   background: #1a1a1a;
@@ -182,4 +187,12 @@ button {
 
 button:hover {
   opacity: 0.9;
+}
+
+/* TROLL SCREEN */
+.troll {
+  font-size: 28px;
+  color: #ff4d4d;
+  text-align: center;
+  margin-top: 40px;
 }
