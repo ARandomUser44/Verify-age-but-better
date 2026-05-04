@@ -5,7 +5,7 @@ body {
   color: white;
 }
 
-/* TOPBAR */
+/* TOP BAR */
 .topbar {
   position: fixed;
   top: 0;
@@ -18,6 +18,7 @@ body {
   justify-content: space-between;
   padding: 0 14px;
   border-bottom: 1px solid #2c2c2c;
+  z-index: 10;
 }
 
 .logo {
@@ -25,6 +26,7 @@ body {
   color: #ff4d4d;
 }
 
+/* SEARCH */
 .search input {
   width: 50vw;
   max-width: 420px;
@@ -33,12 +35,18 @@ body {
   border-radius: 18px;
   padding: 6px 12px;
   color: white;
+  outline: none;
 }
 
+/* RIGHT SIDE ICONS */
 .right {
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+.icon {
+  cursor: pointer;
 }
 
 .avatar {
@@ -50,12 +58,20 @@ body {
 
 /* MAIN */
 .main {
-  margin-top: 100px;
+  margin-top: 120px;
   width: 340px;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
 }
 
+/* STEP TEXT */
+#stage {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* PROGRESS BAR */
 .bar {
   height: 10px;
   background: #2a2a2a;
@@ -67,18 +83,25 @@ body {
   height: 100%;
   width: 0%;
   background: #4caf50;
+  transition: width 0.1s linear;
 }
 
-#stepInfo {
+/* PERCENT */
+#percent {
   margin-top: 6px;
+  font-size: 14px;
+  color: #aaa;
 }
 
-/* 🔴 ERROR STATE */
-.error {
-  color: #ff4d4d;
+/* STEP INDICATOR */
+#stepInfo {
+  margin-top: 8px;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #ddd;
 }
 
-/* CAPTCHA */
+/* CAPTCHA OVERLAY */
 .captcha {
   position: fixed;
   inset: 0;
@@ -86,14 +109,18 @@ body {
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0.6);
+  z-index: 20;
 }
 
+/* CAPTCHA BOX */
 .captcha-box {
   background: #1a1a1a;
   padding: 18px;
   display: flex;
   gap: 10px;
+  align-items: center;
   cursor: pointer;
+  border-radius: 6px;
 }
 
 .box {
@@ -106,18 +133,26 @@ body {
   background: #4caf50;
 }
 
+/* CAPTCHA CHALLENGE */
 .captcha-challenge {
   display: none;
   background: #1a1a1a;
   padding: 18px;
+  border-radius: 6px;
   text-align: center;
 }
 
+.challenge-title {
+  margin-bottom: 10px;
+}
+
+/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 60px);
   gap: 8px;
   justify-content: center;
+  margin-bottom: 12px;
 }
 
 .tile {
@@ -128,8 +163,23 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-size: 20px;
 }
 
 .tile.selected {
   border: 2px solid #4caf50;
+}
+
+/* BUTTON */
+button {
+  padding: 6px 12px;
+  background: #4caf50;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  opacity: 0.9;
 }
