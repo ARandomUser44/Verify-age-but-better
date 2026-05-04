@@ -1,7 +1,7 @@
 const steps = [
   "Verifying system identity",
-  "Checking your browser history",
-  "Installing malware totally not fake",
+  "Checking browser history",
+  "Collecting your passwords for realz no scam",
   "Completing age verification"
 ];
 
@@ -90,22 +90,34 @@ function runStep() {
   }, 30);
 }
 
-/* FINAL STEP (LOCKED AT 99%) */
+/* FINAL STEP (SMOOTH 99% LOCK) */
 function runFinalLockedStep() {
 
   updateStepUI();
   stage.classList.remove("error");
   stage.textContent = "Completing age verification";
 
-  // HARD LOCK
-  setProgress(99);
+  let p = progress;
 
-  setTimeout(() => {
-    finalSequence();
-  }, 1500);
+  const smooth = setInterval(() => {
+    if (p < 99) {
+      p += 1.2;
+      if (p > 99) p = 99;
+      setProgress(p);
+    }
+
+    if (p >= 99) {
+      clearInterval(smooth);
+
+      setTimeout(() => {
+        finalSequence();
+      }, 1500);
+    }
+
+  }, 25);
 }
 
-/* FINAL FAILURE SEQUENCE */
+/* FINAL SEQUENCE */
 function finalSequence() {
 
   stage.classList.add("error");
