@@ -95,25 +95,31 @@ function runStep() {
 /* FINAL SEQUENCE */
 function finalSequence() {
 
+  // HOLD AT 99%
   setProgress(99);
-  stage.classList.add("error");
-  stage.textContent = "Error retrying...";
 
-  let fake = 99;
+  setTimeout(() => {
 
-  const drop = setInterval(() => {
-    fake -= 3;
-    setProgress(fake);
+    stage.classList.add("error");
+    stage.textContent = "Error retrying...";
 
-    if (fake <= 40) {
-      clearInterval(drop);
+    let fake = 99;
 
-      setTimeout(() => {
-        document.getElementById("main").innerHTML =
-          `<div class="troll"> You've been trolled lol</div>`;
-      }, 200);
-    }
-  }, 30);
+    const drop = setInterval(() => {
+      fake -= 3;
+      setProgress(fake);
+
+      if (fake <= 40) {
+        clearInterval(drop);
+
+        setTimeout(() => {
+          document.getElementById("main").innerHTML =
+            `<div class="troll">😂 You've been trolled lol</div>`;
+        }, 200);
+      }
+    }, 30);
+
+  }, 1500); // ⬅️ LONGER DELAY (IMPORTANT CHANGE)
 }
 
 /* CAPTCHA */
@@ -159,3 +165,4 @@ function setupCaptcha() {
     }
   };
 }
+
