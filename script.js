@@ -7,6 +7,8 @@ const steps = [
 
 let step = 0;
 let progress = 0;
+let retry = 0;
+let firstRetry = true;
 
 /* ELEMENTS */
 const main = document.getElementById("main");
@@ -14,8 +16,8 @@ const stage = document.getElementById("stage");
 const fill = document.getElementById("fill");
 const percent = document.getElementById("percent");
 const stepInfo = document.getElementById("stepInfo");
-const captcha = document.getElementById("captcha");
 
+const captcha = document.getElementById("captcha");
 const captchaStep1 = document.getElementById("captchaStep1");
 const captchaStep2 = document.getElementById("captchaStep2");
 const checkBox = document.getElementById("checkBox");
@@ -26,7 +28,7 @@ const verifyBtn = document.getElementById("verifyBtn");
 main.classList.add("show");
 runStep();
 
-/* STEP UI (o--o system) */
+/* STEP UI */
 function updateStepUI() {
   let out = "";
 
@@ -48,6 +50,7 @@ function setProgress(p) {
 /* MAIN FLOW */
 function runStep() {
   updateStepUI();
+  stage.classList.remove("error");
   stage.textContent = steps[step];
 
   let p = 0;
@@ -59,7 +62,6 @@ function runStep() {
     if (p >= 100) {
       clearInterval(tick);
 
-      // CAPTCHA is PART of step 3
       if (step === 2) {
         showCaptcha();
         return;
@@ -106,9 +108,66 @@ verifyBtn.addEventListener("click", () => {
 
   if (valid) {
     captcha.style.display = "none";
-    step++; // continue AFTER CAPTCHA completes step 3
+    step++;
     runStep();
   } else {
     alert("Try again");
   }
 });
+
+/* FINAL RETRY (with red error text) */
+function retryLoop() {
+  if (retry >= 2) return fail();
+
+  retry++;
+
+  stage.classList.add("error");
+  stage.textContent = "Error retrying";
+
+  if (firstRetry) {
+    firstRetry = false;
+    setProgress(0);
+    setTimeout(retryLoop, 700);
+    return;
+  }
+
+  let p = progress;
+
+  const drop = setInterval(() => {
+    p -= 2;
+    setProgress(p);
+
+    if (p <= 70) {
+      clearInterval(drop);
+
+      const rise = setInterval(() => {
+        p += 2;
+        setProgress(p);
+
+        if (p >= 99) {
+          clearInterval(rise);
+          setTimeout(retryLoop, 800);
+        }
+      }, 30);
+    }
+  }, 30);
+}
+
+/* FAIL */
+function fail() {
+  let p = progress;
+
+  const drop = setInterval(() => {
+    p -= 1;
+    setProgress(p);
+
+    if (p <= 30) {
+      clearInterval(drop);
+
+      stage.style.display = "none";
+      document.querySelector(".bar").style.display = "none";
+      percent.style.display = "none";
+      stepInfo.style.display = "none";
+    }
+  }, 60);
+}
