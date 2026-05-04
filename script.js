@@ -12,7 +12,7 @@ let progress = 0;
 let main, stage, fill, percent, stepInfo;
 let captcha, captchaStep1, captchaStep2, checkBox, tiles, verifyBtn;
 
-/* START ONLY WHEN PAGE IS READY */
+/* INIT */
 window.addEventListener("DOMContentLoaded", () => {
 
   main = document.getElementById("main");
@@ -30,7 +30,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   reset();
   runStep();
-  setupCaptcha(); // IMPORTANT
+  setupCaptcha();
 });
 
 /* RESET */
@@ -38,6 +38,13 @@ function reset() {
   step = 0;
   progress = 0;
   setProgress(0);
+}
+
+/* PROGRESS */
+function setProgress(p) {
+  progress = p;
+  fill.style.width = p + "%";
+  percent.textContent = Math.floor(p) + "%";
 }
 
 /* STEP UI */
@@ -52,32 +59,56 @@ function updateStepUI() {
   stepInfo.textContent = out;
 }
 
-/* PROGRESS */
-function setProgress(p) {
-  progress = p;
-  fill.style.width = p + "%";
-  percent.textContent = Math.floor(p) + "%";
-}
-
 /* MAIN FLOW */
 function runStep() {
   if (step >= steps.length) return;
 
   updateStepUI();
+  stage.classList.remove("error");
   stage.textContent = steps[step];
 
   let p = 0;
 
   const tick = setInterval(() => {
-    p += Math.random() * 2;
+    p += Math.random() * 2.2;
     setProgress(p);
 
     if (p >= 100) {
       clearInterval(tick);
 
-      // CAPTCHA happens at step 3
+      /* CAPTCHA STEP */
       if (step === 2) {
         showCaptcha();
+        return;
+      }
+
+      /* FINAL STEP SPECIAL LOGIC */
+      if (step === steps.length - 1) {
+
+        setProgress(99);
+
+        setTimeout(() => {
+          stage.classList.add("error");
+          stage.textContent = "Error retrying...";
+
+          let fake = 99;
+
+          const retry = setInterval(() => {
+            fake -= 2;
+            setProgress(fake);
+
+            if (fake <= 85) {
+              clearInterval(retry);
+
+              setTimeout(() => {
+                step++; // finish
+                runStep();
+              }, 800);
+            }
+          }, 30);
+
+        }, 700);
+
         return;
       }
 
@@ -87,18 +118,15 @@ function runStep() {
   }, 30);
 }
 
-/* CAPTCHA SHOW */
+/* CAPTCHA */
 function showCaptcha() {
   captcha.style.display = "flex";
 }
 
-/* CAPTCHA SETUP (FIXED) */
+/* CAPTCHA SETUP */
 function setupCaptcha() {
 
-  if (!checkBox || !verifyBtn) {
-    console.error("CAPTCHA elements missing!");
-    return;
-  }
+  if (!checkBox || !verifyBtn) return;
 
   /* STEP 1 */
   checkBox.onclick = () => {
@@ -131,7 +159,6 @@ function setupCaptcha() {
 
     if (valid) {
       captcha.style.display = "none";
-
       step++;
       runStep();
     } else {
