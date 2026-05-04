@@ -59,7 +59,6 @@
       width: 20px;
     }
 
-    /* CAPTCHA */
     .captcha {
       display: none;
       align-items: center;
@@ -107,13 +106,13 @@
 
     <div id="stage">Verifying your age<span id="dots"></span></div>
 
-    <div class="bar">
+    <div class="bar" id="bar">
       <div class="fill" id="fill"></div>
     </div>
 
     <div id="percent">0%</div>
 
-    <div class="troll" id="troll">😂 You've been trolled lol</div>
+    <div class="troll" id="troll"> You've been trolled lol</div>
 
   </div>
 
@@ -139,6 +138,7 @@ const percent = document.getElementById("percent");
 const stage = document.getElementById("stage");
 const troll = document.getElementById("troll");
 const dots = document.getElementById("dots");
+const bar = document.getElementById("bar");
 
 let dotState = 0;
 let started = false;
@@ -151,6 +151,22 @@ setInterval(() => {
 }, 400);
 
 function runStep() {
+
+  /* 👉 CAPTCHA STEP WITHOUT PROGRESS BAR */
+  if (steps[stepIndex] === "I’m not a robot") {
+    stage.textContent = "I’m not a robot";
+    stage.appendChild(dots);
+
+    bar.style.display = "none";
+    percent.style.display = "none";
+
+    captcha.style.display = "flex";
+    return;
+  }
+
+  bar.style.display = "block";
+  percent.style.display = "block";
+
   progress = 0;
   fill.style.width = "0%";
   percent.textContent = "0%";
@@ -166,14 +182,7 @@ function runStep() {
 
     if (progress >= 100) {
       clearInterval(interval);
-
       stepIndex++;
-
-      /* CAPTCHA STEP */
-      if (steps[stepIndex - 1] === "I’m not a robot") {
-        captcha.style.display = "flex";
-        return; // IMPORTANT FIX: stop progress completely
-      }
 
       if (stepIndex < steps.length) {
         setTimeout(runStep, 500);
@@ -184,7 +193,7 @@ function runStep() {
   }, 30);
 }
 
-/* FINAL STAGE LOGIC */
+/* FINAL STAGE */
 function runFinalStage() {
   setTimeout(() => {
     let finalProgress = 99;
@@ -202,13 +211,13 @@ function runFinalStage() {
         clearInterval(drop);
 
         stage.style.display = "none";
-        document.querySelector(".bar").style.display = "none";
+        bar.style.display = "none";
         percent.style.display = "none";
         troll.style.display = "block";
       }
     }, 60);
 
-  }, 2000); // ONLY final stage delay
+  }, 2000);
 }
 
 /* CAPTCHA CLICK */
