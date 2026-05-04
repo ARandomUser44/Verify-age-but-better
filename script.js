@@ -33,9 +33,23 @@ stage.textContent = steps[0];
 updateStepUI();
 runStep();
 
-/* STEP UI */
+/* STEP DISPLAY (NEW STYLE) */
 function updateStepUI() {
-  stepInfo.textContent = `Step ${step + 1}/${steps.length}: ${steps[step]}`;
+  let output = "";
+
+  for (let i = 0; i < steps.length; i++) {
+    if (i < step) {
+      output += "•";
+    } else {
+      output += "o";
+    }
+
+    if (i < steps.length - 1) {
+      output += "--";
+    }
+  }
+
+  stepInfo.textContent = output;
 }
 
 /* PROGRESS */
@@ -45,7 +59,7 @@ function setProgress(p) {
   percent.textContent = Math.floor(p) + "%";
 }
 
-/* STEPS */
+/* MAIN STEPS */
 function runStep() {
   if (step === steps.length - 1) return runFinal();
 
@@ -77,7 +91,7 @@ function showCaptcha() {
   captcha.style.display = "flex";
 }
 
-/* STEP 1 */
+/* CAPTCHA STEP 1 */
 checkBox.addEventListener("click", () => {
   checkBox.classList.add("checked");
 
@@ -87,10 +101,10 @@ checkBox.addEventListener("click", () => {
   }, 400);
 });
 
-/* STEP 2 */
-tiles.forEach(t => {
-  t.addEventListener("click", () => {
-    t.classList.toggle("selected");
+/* CAPTCHA STEP 2 */
+tiles.forEach(tile => {
+  tile.addEventListener("click", () => {
+    tile.classList.toggle("selected");
   });
 });
 
