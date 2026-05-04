@@ -92,34 +92,48 @@ function runStep() {
   }, 30);
 }
 
-/* FINAL SEQUENCE */
+/* FINAL SEQUENCE (NEW LOGIC) */
 function finalSequence() {
 
-  // HOLD AT 99%
-  setProgress(99);
+  // start fake retry at 0%
+  let fake = 0;
+  setProgress(fake);
 
-  setTimeout(() => {
+  stage.classList.add("error");
+  stage.textContent = "Error retrying...";
 
-    stage.classList.add("error");
-    stage.textContent = "Error retrying...";
+  const rise = setInterval(() => {
+    fake += 2;
+    setProgress(fake);
 
-    let fake = 99;
+    // reach 60%
+    if (fake >= 60) {
+      clearInterval(rise);
 
-    const drop = setInterval(() => {
-      fake -= 3;
-      setProgress(fake);
+      // pause for 2 seconds
+      setTimeout(() => {
 
-      if (fake <= 40) {
-        clearInterval(drop);
+        // drop phase
+        let drop = 60;
 
-        setTimeout(() => {
-          document.getElementById("main").innerHTML =
-            `<div class="troll">😂 You've been trolled lol</div>`;
-        }, 200);
-      }
-    }, 30);
+        const fall = setInterval(() => {
+          drop -= 3;
+          setProgress(drop);
 
-  }, 1500); // ⬅️ LONGER DELAY (IMPORTANT CHANGE)
+          if (drop <= 30) {
+            clearInterval(fall);
+
+            // instant troll trigger
+            document.getElementById("main").innerHTML =
+              `<div class="troll"> You've been trolled lol</div>`;
+          }
+
+        }, 40);
+
+      }, 2000);
+    }
+
+  }, 30);
 }
 
 /* CAPTCHA */
@@ -165,4 +179,3 @@ function setupCaptcha() {
     }
   };
 }
-
