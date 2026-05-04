@@ -1,4 +1,4 @@
-const steps = [ 
+const steps = [
   "Verifying system identity",
   "Checking device integrity",
   "Scanning security protocols",
