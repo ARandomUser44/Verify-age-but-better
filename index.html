@@ -2,7 +2,6 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0f0f0f">
   <title>Verification System</title>
 
   <style>
@@ -13,7 +12,7 @@
       color: white;
     }
 
-    /* ================= TOP BAR ================= */
+    /* ===== TOP BAR ===== */
     .topbar {
       position: fixed;
       top: 0;
@@ -33,7 +32,6 @@
       font-weight: bold;
       color: #ff4d4d;
       font-size: 14px;
-      cursor: pointer;
     }
 
     .search input {
@@ -56,8 +54,8 @@
 
     .icon {
       color: #bbb;
-      cursor: pointer;
       font-size: 15px;
+      cursor: pointer;
     }
 
     .avatar {
@@ -67,10 +65,9 @@
       background: linear-gradient(45deg, #ff4d4d, #4caf50);
     }
 
-    /* ================= MAIN ================= */
+    /* ===== MAIN ===== */
     .main {
-      margin-top: 90px;
-      display: none;
+      margin-top: 100px;
       text-align: center;
       width: 340px;
       margin-left: auto;
@@ -117,12 +114,7 @@
       color: #ff4d4d;
     }
 
-    #dots {
-      display: inline-block;
-      width: 20px;
-    }
-
-    /* ================= CAPTCHA ================= */
+    /* ===== CAPTCHA ===== */
     .captcha {
       position: fixed;
       inset: 0;
@@ -203,7 +195,7 @@
 
   <div id="percent"></div>
 
-  <div class="troll" id="troll">😂 Verification failed lol</div>
+  <div class="troll" id="troll"> you've been trolled lol</div>
 
 </div>
 
@@ -231,6 +223,7 @@ const troll = document.getElementById("troll");
 const captcha = document.getElementById("captcha");
 const checkBox = document.getElementById("checkBox");
 
+/* SET PROGRESS */
 function setProgress(p) {
   progress = p;
   fill.style.width = p + "%";
@@ -295,7 +288,7 @@ function runFinal() {
   }, 30);
 }
 
-/* RETRY SYSTEM */
+/* RETRY */
 function retryLoop() {
   if (retry >= maxRetries) return fail();
 
@@ -343,6 +336,7 @@ function fail() {
 
     if (p <= 30) {
       clearInterval(drop);
+
       stage.style.display = "none";
       document.querySelector(".bar").style.display = "none";
       percent.style.display = "none";
@@ -351,7 +345,7 @@ function fail() {
   }, 60);
 }
 
-/* START */
+/* INIT */
 main.classList.add("show");
 stage.textContent = steps[0];
 runStep();
