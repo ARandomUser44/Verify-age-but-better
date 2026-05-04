@@ -1,8 +1,8 @@
 const steps = [
   "Verifying system identity",
-  "Checking device integrity",
+  "Checking your browser history",
   "Scanning security protocols",
-  "Completing age check"
+  "Completing age verification"
 ];
 
 let step = 0;
@@ -61,7 +61,10 @@ function updateStepUI() {
 
 /* MAIN FLOW */
 function runStep() {
-  if (step >= steps.length) return;
+  if (step >= steps.length - 1) {
+    runFinalLockedStep();
+    return;
+  }
 
   updateStepUI();
   stage.classList.remove("error");
@@ -81,39 +84,45 @@ function runStep() {
         return;
       }
 
-      if (step === steps.length - 1) {
-        finalSequence();
-        return;
-      }
-
       step++;
       setTimeout(runStep, 200);
     }
   }, 30);
 }
 
-/* FINAL SEQUENCE (NEW LOGIC) */
-function finalSequence() {
+/* FINAL STEP (LOCKED AT 99%) */
+function runFinalLockedStep() {
 
-  // start fake retry at 0%
-  let fake = 0;
-  setProgress(fake);
+  updateStepUI();
+  stage.classList.remove("error");
+  stage.textContent = "Completing age verification";
+
+  // HARD LOCK
+  setProgress(99);
+
+  setTimeout(() => {
+    finalSequence();
+  }, 1500);
+}
+
+/* FINAL FAILURE SEQUENCE */
+function finalSequence() {
 
   stage.classList.add("error");
   stage.textContent = "Error retrying...";
+
+  let fake = 0;
+  setProgress(fake);
 
   const rise = setInterval(() => {
     fake += 2;
     setProgress(fake);
 
-    // reach 60%
     if (fake >= 60) {
       clearInterval(rise);
 
-      // pause for 2 seconds
       setTimeout(() => {
 
-        // drop phase
         let drop = 60;
 
         const fall = setInterval(() => {
@@ -123,7 +132,6 @@ function finalSequence() {
           if (drop <= 30) {
             clearInterval(fall);
 
-            // instant troll trigger
             document.getElementById("main").innerHTML =
               `<div class="troll"> You've been trolled lol</div>`;
           }
@@ -131,6 +139,7 @@ function finalSequence() {
         }, 40);
 
       }, 2000);
+
     }
 
   }, 30);
