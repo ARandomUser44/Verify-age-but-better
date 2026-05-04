@@ -121,7 +121,6 @@ const steps = [
   "Verifying your age",
   "Checking device integrity",
   "Scanning security protocols",
-  "I’m not a robot",
   "Completing age check"
 ];
 
@@ -152,9 +151,9 @@ setInterval(() => {
 
 function runStep() {
 
-  /* 👉 CAPTCHA STEP WITHOUT PROGRESS BAR */
-  if (steps[stepIndex] === "I’m not a robot") {
-    stage.textContent = "I’m not a robot";
+  /* CAPTCHA STEP */
+  if (stepIndex === 3) {
+    stage.textContent = "";
     stage.appendChild(dots);
 
     bar.style.display = "none";
