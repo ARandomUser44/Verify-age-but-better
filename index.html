@@ -111,7 +111,7 @@
 
   <div id="percent">0%</div>
 
-  <div class="troll" id="troll">😂 You've been trolled lol</div>
+  <div class="troll" id="troll"> You've been trolled lol</div>
 
 </div>
 
@@ -144,9 +144,8 @@ const dots = document.getElementById("dots");
 
 let dotState = 0;
 let started = false;
-let isFinalStage = false;
 
-/* dots animation */
+/* animated dots */
 setInterval(() => {
   if (!started) return;
   dotState = (dotState + 1) % 4;
@@ -161,9 +160,9 @@ function runStep() {
   percent.style.display = "block";
   document.querySelector(".bar").style.display = "block";
   stage.style.display = "block";
+
   stage.style.color = "white";
   dots.style.color = "white";
-  isFinalStage = false;
 
   stage.textContent = steps[stepIndex];
   stage.appendChild(dots);
@@ -177,7 +176,6 @@ function runStep() {
   }
 
   if (stepIndex === steps.length - 1) {
-    isFinalStage = true;
     runFinalStage();
     return;
   }
@@ -199,11 +197,11 @@ function runStep() {
 function runFinalStage() {
   progress = 0;
 
+  stage.style.color = "white";
+  dots.style.color = "white";
+
   stage.textContent = "Completing age check";
   stage.appendChild(dots);
-
-  // 🔴 make dots red in final stage
-  dots.style.color = "#ff4d4d";
 
   interval = setInterval(() => {
     progress += 1;
@@ -217,6 +215,7 @@ function runFinalStage() {
   }, 30);
 }
 
+/* RETRY SYSTEM */
 function retryLoop() {
   if (retryCount >= maxRetries) {
     finalTroll();
@@ -225,17 +224,18 @@ function retryLoop() {
 
   retryCount++;
 
-  stage.textContent = "Retrying";
+  stage.textContent = "Error retrying";
   stage.style.color = "#ff4d4d";
-  dots.textContent = ""; // remove dots
+  dots.style.color = "#ff4d4d";
 
+  /* first retry instantly resets */
   if (firstRetry) {
     firstRetry = false;
     progress = 0;
     fill.style.width = "0%";
     percent.textContent = "0%";
 
-    setTimeout(() => retryLoop(), 600);
+    setTimeout(() => retryLoop(), 700);
     return;
   }
 
@@ -302,3 +302,4 @@ runStep();
 
 </body>
 </html>
+
