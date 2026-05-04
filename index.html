@@ -112,7 +112,7 @@
 
     <div id="percent">0%</div>
 
-    <div class="troll" id="troll"> You've been trolled lol</div>
+    <div class="troll" id="troll">😂 You've been trolled lol</div>
 
   </div>
 
@@ -153,8 +153,8 @@ function runStep() {
 
   /* CAPTCHA STEP */
   if (stepIndex === 3) {
-    stage.textContent = "";
-    stage.appendChild(dots);
+    stage.textContent = "";      // remove text
+    dots.textContent = "";       // remove dots completely
 
     bar.style.display = "none";
     percent.style.display = "none";
