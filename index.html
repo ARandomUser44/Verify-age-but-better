@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verification System</title>
   <link rel="stylesheet" href="style.css">
@@ -8,11 +9,12 @@
 
 <body>
 
+<!-- TOP BAR -->
 <div class="topbar">
   <div class="logo">r/verify</div>
 
   <div class="search">
-    <input type="text" placeholder="🔍 Find anything" />
+    <input type="text" placeholder="Search verification logs..." />
   </div>
 
   <div class="right">
@@ -22,14 +24,16 @@
   </div>
 </div>
 
-<!-- CAPTCHA -->
+<!-- CAPTCHA OVERLAY -->
 <div class="captcha" id="captcha">
 
+  <!-- STEP 1 -->
   <div id="captchaStep1" class="captcha-box">
     <div class="box" id="checkBox"></div>
     <span>I’m not a robot</span>
   </div>
 
+  <!-- STEP 2 -->
   <div id="captchaStep2" class="captcha-challenge">
     <div class="challenge-title">Select all cars</div>
 
@@ -47,19 +51,25 @@
 
 </div>
 
+<!-- MAIN UI -->
 <div class="main" id="main">
 
+  <!-- STEP TEXT -->
   <div id="stage"></div>
 
+  <!-- PROGRESS BAR -->
   <div class="bar">
     <div class="fill" id="fill"></div>
   </div>
 
+  <!-- PERCENT -->
   <div id="percent">0%</div>
 
+  <!-- STEP INDICATOR -->
   <div id="stepInfo"></div>
 
-  <div class="troll" id="troll"> you've been trolled lol</div>
+  <!-- FAIL / TROLL SCREEN -->
+  <div class="troll" id="troll"> You've been trolled lol</div>
 
 </div>
 
