@@ -23,7 +23,6 @@ body {
 .logo {
   font-weight: bold;
   color: #ff4d4d;
-  font-size: 14px;
 }
 
 .search input {
@@ -34,18 +33,12 @@ body {
   border-radius: 18px;
   padding: 6px 12px;
   color: white;
-  font-size: 13px;
 }
 
 .right {
   display: flex;
   gap: 10px;
   align-items: center;
-}
-
-.icon {
-  color: #bbb;
-  font-size: 15px;
 }
 
 .avatar {
@@ -59,29 +52,15 @@ body {
 .main {
   margin-top: 100px;
   width: 340px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto;
   text-align: center;
-  opacity: 0;
-  transition: 0.3s;
-}
-
-.main.show {
-  opacity: 1;
-}
-
-#stage {
-  font-size: 20px;
-  margin-bottom: 10px;
 }
 
 .bar {
-  width: 100%;
   height: 10px;
   background: #2a2a2a;
   border-radius: 5px;
   overflow: hidden;
-  margin: 10px 0;
 }
 
 .fill {
@@ -90,19 +69,12 @@ body {
   background: #4caf50;
 }
 
-#percent {
-  font-size: 14px;
-  color: #aaa;
-}
-
 #stepInfo {
   margin-top: 6px;
-  font-size: 16px;
 }
 
-.troll {
-  display: none;
-  font-size: 26px;
+/* 🔴 ERROR STATE */
+.error {
   color: #ff4d4d;
 }
 
@@ -119,7 +91,6 @@ body {
 .captcha-box {
   background: #1a1a1a;
   padding: 18px;
-  border-radius: 8px;
   display: flex;
   gap: 10px;
   cursor: pointer;
@@ -139,12 +110,7 @@ body {
   display: none;
   background: #1a1a1a;
   padding: 18px;
-  border-radius: 8px;
   text-align: center;
-}
-
-.challenge-title {
-  margin-bottom: 10px;
 }
 
 .grid {
@@ -166,13 +132,4 @@ body {
 
 .tile.selected {
   border: 2px solid #4caf50;
-}
-
-#verifyBtn {
-  margin-top: 10px;
-  padding: 6px 12px;
-  background: #4caf50;
-  border: none;
-  color: white;
-  cursor: pointer;
 }
