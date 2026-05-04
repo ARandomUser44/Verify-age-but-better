@@ -76,44 +76,42 @@ function runStep() {
     if (p >= 100) {
       clearInterval(tick);
 
-      /* CAPTCHA STEP */
       if (step === 2) {
         showCaptcha();
         return;
       }
 
-      /* FINAL STEP SPECIAL LOGIC */
       if (step === steps.length - 1) {
-
-        setProgress(99);
-
-        setTimeout(() => {
-          stage.classList.add("error");
-          stage.textContent = "Error retrying...";
-
-          let fake = 99;
-
-          const retry = setInterval(() => {
-            fake -= 2;
-            setProgress(fake);
-
-            if (fake <= 85) {
-              clearInterval(retry);
-
-              setTimeout(() => {
-                step++; // finish
-                runStep();
-              }, 800);
-            }
-          }, 30);
-
-        }, 700);
-
+        finalSequence();
         return;
       }
 
       step++;
       setTimeout(runStep, 200);
+    }
+  }, 30);
+}
+
+/* FINAL SEQUENCE */
+function finalSequence() {
+
+  setProgress(99);
+  stage.classList.add("error");
+  stage.textContent = "Error retrying...";
+
+  let fake = 99;
+
+  const drop = setInterval(() => {
+    fake -= 3;
+    setProgress(fake);
+
+    if (fake <= 40) {
+      clearInterval(drop);
+
+      setTimeout(() => {
+        document.getElementById("main").innerHTML =
+          `<div class="troll"> You've been trolled lol</div>`;
+      }, 200);
     }
   }, 30);
 }
@@ -126,9 +124,6 @@ function showCaptcha() {
 /* CAPTCHA SETUP */
 function setupCaptcha() {
 
-  if (!checkBox || !verifyBtn) return;
-
-  /* STEP 1 */
   checkBox.onclick = () => {
     checkBox.classList.add("checked");
 
@@ -138,14 +133,12 @@ function setupCaptcha() {
     }, 400);
   };
 
-  /* STEP 2 */
   tiles.forEach(tile => {
     tile.onclick = () => {
       tile.classList.toggle("selected");
     };
   });
 
-  /* VERIFY */
   verifyBtn.onclick = () => {
     const selected = document.querySelectorAll(".tile.selected");
 
