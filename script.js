@@ -148,7 +148,7 @@ function finalSequence() {
             clearInterval(fall);
 
             document.getElementById("main").innerHTML =
-              `<div class="troll">😂 You've been trolled lol</div>`;
+              `<div class="troll"> You've been trolled lol</div>`;
           }
 
         }, 40);
