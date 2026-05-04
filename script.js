@@ -1,7 +1,7 @@
 const steps = [
   "Verifying system identity",
   "Checking browser history",
-  "Collecting your passwords for realz no scam",
+  "installing malware trust me no fake",
   "Completing age verification"
 ];
 
@@ -90,31 +90,34 @@ function runStep() {
   }, 30);
 }
 
-/* FINAL STEP (SMOOTH 99% LOCK) */
+/* FINAL STEP (0 → 99 SMOOTH) */
 function runFinalLockedStep() {
 
   updateStepUI();
   stage.classList.remove("error");
   stage.textContent = "Completing age verification";
 
-  let p = progress;
+  let p = 0;
+  setProgress(0);
 
   const smooth = setInterval(() => {
-    if (p < 99) {
-      p += 1.2;
-      if (p > 99) p = 99;
-      setProgress(p);
-    }
+    p += 0.8; // speed of progress
 
     if (p >= 99) {
+      p = 99;
+      setProgress(99);
       clearInterval(smooth);
 
       setTimeout(() => {
         finalSequence();
       }, 1500);
+
+      return;
     }
 
-  }, 25);
+    setProgress(p);
+
+  }, 30);
 }
 
 /* FINAL SEQUENCE */
@@ -145,7 +148,7 @@ function finalSequence() {
             clearInterval(fall);
 
             document.getElementById("main").innerHTML =
-              `<div class="troll"> You've been trolled lol</div>`;
+              `<div class="troll">😂 You've been trolled lol</div>`;
           }
 
         }, 40);
