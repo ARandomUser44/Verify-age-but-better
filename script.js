@@ -2,7 +2,7 @@ const steps = [
   "Verifying system identity",
   "Checking device integrity",
   "Scanning security protocols",
-  "Finalizing request"
+  "Completing age check"
 ];
 
 let step = 0;
@@ -12,7 +12,7 @@ let progress = 0;
 let main, stage, fill, percent, stepInfo;
 let captcha, captchaStep1, captchaStep2, checkBox, tiles, verifyBtn;
 
-/* INIT (IMPORTANT: prevents broken load) */
+/* START ONLY WHEN PAGE IS READY */
 window.addEventListener("DOMContentLoaded", () => {
 
   main = document.getElementById("main");
@@ -30,6 +30,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   reset();
   runStep();
+  setupCaptcha(); // IMPORTANT
 });
 
 /* RESET */
@@ -74,7 +75,7 @@ function runStep() {
     if (p >= 100) {
       clearInterval(tick);
 
-      // CAPTCHA ONLY at step 3
+      // CAPTCHA happens at step 3
       if (step === 2) {
         showCaptcha();
         return;
@@ -86,45 +87,55 @@ function runStep() {
   }, 30);
 }
 
-/* CAPTCHA */
+/* CAPTCHA SHOW */
 function showCaptcha() {
   captcha.style.display = "flex";
 }
 
-/* STEP 1 */
-checkBox.addEventListener("click", () => {
-  checkBox.classList.add("checked");
+/* CAPTCHA SETUP (FIXED) */
+function setupCaptcha() {
 
-  setTimeout(() => {
-    captchaStep1.style.display = "none";
-    captchaStep2.style.display = "block";
-  }, 400);
-});
-
-/* STEP 2 */
-tiles.forEach(tile => {
-  tile.addEventListener("click", () => {
-    tile.classList.toggle("selected");
-  });
-});
-
-verifyBtn.addEventListener("click", () => {
-  const selected = document.querySelectorAll(".tile.selected");
-
-  let valid = true;
-
-  selected.forEach(t => {
-    if (t.dataset.type !== "car") valid = false;
-  });
-
-  if (selected.length === 0) valid = false;
-
-  if (valid) {
-    captcha.style.display = "none";
-
-    step++;          // continue after CAPTCHA
-    runStep();
-  } else {
-    alert("Try again");
+  if (!checkBox || !verifyBtn) {
+    console.error("CAPTCHA elements missing!");
+    return;
   }
-});
+
+  /* STEP 1 */
+  checkBox.onclick = () => {
+    checkBox.classList.add("checked");
+
+    setTimeout(() => {
+      captchaStep1.style.display = "none";
+      captchaStep2.style.display = "block";
+    }, 400);
+  };
+
+  /* STEP 2 */
+  tiles.forEach(tile => {
+    tile.onclick = () => {
+      tile.classList.toggle("selected");
+    };
+  });
+
+  /* VERIFY */
+  verifyBtn.onclick = () => {
+    const selected = document.querySelectorAll(".tile.selected");
+
+    let valid = true;
+
+    selected.forEach(t => {
+      if (t.dataset.type !== "car") valid = false;
+    });
+
+    if (selected.length === 0) valid = false;
+
+    if (valid) {
+      captcha.style.display = "none";
+
+      step++;
+      runStep();
+    } else {
+      alert("Try again");
+    }
+  };
+}
