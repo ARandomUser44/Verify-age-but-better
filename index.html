@@ -12,7 +12,7 @@
       color: white;
     }
 
-    /* ===== TOP BAR ===== */
+    /* TOP BAR */
     .topbar {
       position: fixed;
       top: 0;
@@ -55,7 +55,6 @@
     .icon {
       color: #bbb;
       font-size: 15px;
-      cursor: pointer;
     }
 
     .avatar {
@@ -65,7 +64,7 @@
       background: linear-gradient(45deg, #ff4d4d, #4caf50);
     }
 
-    /* ===== MAIN ===== */
+    /* MAIN */
     .main {
       margin-top: 100px;
       text-align: center;
@@ -103,18 +102,26 @@
     }
 
     #percent {
-      font-size: 13px;
+      font-size: 14px;
       color: #aaa;
-      margin-bottom: 15px;
+    }
+
+    /* ⭐ NEW STEP TEXT */
+    #stepInfo {
+      margin-top: 6px;
+      font-size: 16px;
+      color: #ffffff;
+      font-weight: 500;
     }
 
     .troll {
       display: none;
       font-size: 26px;
       color: #ff4d4d;
+      margin-top: 10px;
     }
 
-    /* ===== CAPTCHA ===== */
+    /* CAPTCHA */
     .captcha {
       position: fixed;
       inset: 0;
@@ -193,9 +200,12 @@
     <div class="fill" id="fill"></div>
   </div>
 
-  <div id="percent"></div>
+  <div id="percent">0%</div>
 
-  <div class="troll" id="troll"> you've been trolled lol</div>
+  <!-- ⭐ NEW STEP DISPLAY -->
+  <div id="stepInfo">Step 1/5</div>
+
+  <div class="troll" id="troll">😂 Verification failed lol</div>
 
 </div>
 
@@ -218,22 +228,29 @@ const main = document.getElementById("main");
 const stage = document.getElementById("stage");
 const fill = document.getElementById("fill");
 const percent = document.getElementById("percent");
+const stepInfo = document.getElementById("stepInfo");
 const troll = document.getElementById("troll");
 
 const captcha = document.getElementById("captcha");
 const checkBox = document.getElementById("checkBox");
 
-/* SET PROGRESS */
+/* UPDATE UI */
+function updateStepUI() {
+  stepInfo.textContent = `Step ${step + 1}/${steps.length}: ${steps[step]}`;
+}
+
+/* PROGRESS */
 function setProgress(p) {
   progress = p;
   fill.style.width = p + "%";
   percent.textContent = Math.floor(p) + "%";
 }
 
-/* NORMAL STEPS */
+/* STEPS */
 function runStep() {
   if (step === steps.length - 1) return runFinal();
 
+  updateStepUI();
   stage.textContent = steps[step];
 
   let p = 0;
@@ -273,7 +290,8 @@ checkBox.addEventListener("click", () => {
 
 /* FINAL */
 function runFinal() {
-  stage.textContent = "Finalizing request";
+  updateStepUI();
+  stage.textContent = "Completing age verification";
 
   let p = 0;
 
@@ -295,7 +313,6 @@ function retryLoop() {
   retry++;
 
   stage.textContent = "Error retrying";
-  stage.style.color = "#ff4d4d";
 
   if (firstRetry) {
     firstRetry = false;
@@ -326,7 +343,7 @@ function retryLoop() {
   }, 30);
 }
 
-/* END */
+/* FAIL */
 function fail() {
   let p = progress;
 
@@ -340,14 +357,16 @@ function fail() {
       stage.style.display = "none";
       document.querySelector(".bar").style.display = "none";
       percent.style.display = "none";
+      stepInfo.style.display = "none";
       troll.style.display = "block";
     }
   }, 60);
 }
 
-/* INIT */
+/* START */
 main.classList.add("show");
 stage.textContent = steps[0];
+updateStepUI();
 runStep();
 </script>
 
